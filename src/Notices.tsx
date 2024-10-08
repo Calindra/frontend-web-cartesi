@@ -1,41 +1,47 @@
-// Copyright 2022 Cartesi Pte. Ltd.
+import React, { useEffect, useState } from "react";
+import { fromHex } from 'viem'
+import { getGraphqlUrl, getNotices, PartialNotice } from './utils/graphql'
 
-// Licensed under the Apache License, Version 2.0 (the "License"); you may not
-// use this file except in compliance with the License. You may obtain a copy
-// of the license at http://www.apache.org/licenses/LICENSE-2.0
+interface Propos {
+    chain:string
+}
 
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-// WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-// License for the specific language governing permissions and limitations
-// under the License.
+export const Notices: React.FC<Propos> = ({chain}:{chain:string}) => {
+    const [fetching, setFetching] = useState<boolean>(false);
+    const [error, setError] = useState<string>();
+    const [reload, setReload] = useState<number>(0);
+    const [noticesData, setNoticesData] = useState<PartialNotice[]>([]);
 
-import { ethers } from "ethers";
-import React from "react";
-import { useNoticesQuery } from "./generated/graphql";
+    useEffect(() => {
+        if (!chain) {
+            setError("No connected chain");
+            return;
+        }
+        const url = getGraphqlUrl(chain);
+        if (!url) {
+            setError("No chain graphql url");
+            return;
+        }
+        setFetching(true);
+        getNotices(url).then(n => {
+            setNoticesData(n);
+            setFetching(false);
+        });
 
-type Notice = {
-    id: string;
-    index: number;
-    input: any, //{index: number; epoch: {index: number; }
-    payload: string;
-};
+    }, [chain,reload]);
 
-export const Notices: React.FC = () => {
-    const [result,reexecuteQuery] = useNoticesQuery();
-    const { data, fetching, error } = result;
-
+    
     if (fetching) return <p>Loading...</p>;
-    if (error) return <p>Oh no... {error.message}</p>;
+    if (error) return <p>Oh no... {error}</p>;
 
-    if (!data || !data.notices) return <p>No notices</p>;
+    if (!noticesData) return <p>No notices</p>;
 
-    const notices: Notice[] = data.notices.edges.map((node: any) => {
-        const n = node.node;
-        let inputPayload = n?.input.payload;
+    const notices: PartialNotice[] = noticesData.map((node: PartialNotice) => {
+        const n = node;
+        let inputPayload = n?.input?.payload;
         if (inputPayload) {
             try {
-                inputPayload = ethers.utils.toUtf8String(inputPayload);
+                inputPayload = fromHex(inputPayload as `0x${string}`, 'string');
             } catch (e) {
                 inputPayload = inputPayload + " (hex)";
             }
@@ -45,7 +51,7 @@ export const Notices: React.FC = () => {
         let payload = n?.payload;
         if (payload) {
             try {
-                payload = ethers.utils.toUtf8String(payload);
+                payload = fromHex(payload as `0x${string}`, 'string');
             } catch (e) {
                 payload = payload + " (hex)";
             }
@@ -53,10 +59,9 @@ export const Notices: React.FC = () => {
             payload = "(empty)";
         }
         return {
-            id: `${n?.id}`,
-            index: parseInt(n?.index),
+            index: n.index,
             payload: `${payload}`,
-            input: n ? {index:n.input.index,payload: inputPayload} : {},
+            input: (n && n.input?.id) ? {id:n.input.id,payload: inputPayload} : undefined,
         };
     }).sort((b: any, a: any) => {
         if (a.input.index === b.input.index) {
@@ -69,14 +74,14 @@ export const Notices: React.FC = () => {
     // const forceUpdate = useForceUpdate();
     return (
         <div>
-            <button onClick={() => reexecuteQuery({ requestPolicy: 'network-only' })}>
+            <button onClick={() => setReload(reload+1)}>
                 Reload
             </button>
             <table>
                 <thead>
                     <tr>
-                        <th>Input Index</th>
-                        <th>Notice Index</th>
+                        <th>Input Id</th>
+                        <th>Notice Output Index</th>
                         {/* <th>Input Payload</th> */}
                         <th>Payload</th>
                     </tr>

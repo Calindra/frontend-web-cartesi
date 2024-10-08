@@ -1,24 +1,22 @@
 # NOTICES
 
-query notice($noticeIndex: Int!, $inputIndex: Int!) {
-  notice(noticeIndex: $noticeIndex, inputIndex: $inputIndex) {
+query notice($outputIndex: Int!) {
+  notice(outputIndex: $outputIndex) {
     index
     input {
-      index
+      id
+      payload
     }
     payload
     proof {
-      validity {
-        inputIndexWithinEpoch
-        outputIndexWithinInput
-        outputHashesRootHash
-        vouchersEpochRootHash
-        noticesEpochRootHash
-        machineStateHash
-        outputHashInOutputHashesSiblings
-        outputHashesInEpochSiblings
-      }
-      context
+      outputIndex
+      validityInputIndexWithinEpoch
+      validityMachineStateHash
+      validityOutputEpochRootHash
+      validityOutputHashInOutputHashesSiblings
+      validityOutputHashesInEpochSiblings
+      validityOutputHashesRootHash
+      validityOutputIndexWithinInput
     }
   }
 }
@@ -28,24 +26,9 @@ query notices {
     edges {
       node {
         index
-        input {
-          index
-        }
         payload
-      }
-    }
-  }
-}
-
-query noticesByInput($inputIndex: Int!) {
-  input(index: $inputIndex) {
-    notices {
-      edges {
-        node {
-          index
-          input {
-            index
-          }
+        input {
+          id
           payload
         }
       }
@@ -56,26 +39,25 @@ query noticesByInput($inputIndex: Int!) {
 
 # VOUCHERS
 
-query voucher($voucherIndex: Int!, $inputIndex: Int!) {
-  voucher(voucherIndex: $voucherIndex, inputIndex: $inputIndex) {
+query voucher($outputIndex: Int!) {
+  voucher(outputIndex: $outputIndex) {
     index
     input {
-      index
+      id
+      payload
     }
     destination
+    value
     payload
     proof {
-      validity {
-        inputIndexWithinEpoch
-        outputIndexWithinInput
-        outputHashesRootHash
-        vouchersEpochRootHash
-        noticesEpochRootHash
-        machineStateHash
-        outputHashInOutputHashesSiblings
-        outputHashesInEpochSiblings
-      }
-      context
+      outputIndex
+      validityInputIndexWithinEpoch
+      validityMachineStateHash
+      validityOutputEpochRootHash
+      validityOutputHashInOutputHashesSiblings
+      validityOutputHashesInEpochSiblings
+      validityOutputHashesRootHash
+      validityOutputIndexWithinInput
     }
   }
 }
@@ -86,27 +68,12 @@ query vouchers {
       node {
         index
         input {
-          index
-        }
-        destination
-        payload
-      }
-    }
-  }
-}
-
-query vouchersByInput($inputIndex: Int!) {
-  input(index: $inputIndex) {
-    vouchers {
-      edges {
-        node {
-          index
-          input {
-            index
-          }
-          destination
+          id
           payload
         }
+        destination
+        value
+        payload
       }
     }
   }
@@ -115,11 +82,12 @@ query vouchersByInput($inputIndex: Int!) {
 
 # REPORTS
 
-query report($reportIndex: Int!, $inputIndex: Int!) {
-  report(reportIndex: $reportIndex, inputIndex: $inputIndex) {
+query report($reportIndex: Int!) {
+  report(reportIndex: $reportIndex) {
     index
     input {
-      index
+      id
+      payload
     }
     payload
   }
@@ -131,25 +99,10 @@ query reports {
       node {
         index
         input {
-          index
-        }
-        payload
-      }
-    }
-  }
-}
-
-query reportsByInput($inputIndex: Int!) {
-  input(index: $inputIndex) {
-    reports {
-      edges {
-        node {
-          index
-          input {
-            index
-          }
+          id
           payload
         }
+        payload
       }
     }
   }

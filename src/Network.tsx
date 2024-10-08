@@ -1,65 +1,117 @@
-// Copyright 2022 Cartesi Pte. Ltd.
+import { FC, useState } from "react";
+import 'viem/window'
 
-// Licensed under the Apache License, Version 2.0 (the "License"); you may not
-// use this file except in compliance with the License. You may obtain a copy
-// of the license at http://www.apache.org/licenses/LICENSE-2.0
-
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-// WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-// License for the specific language governing permissions and limitations
-// under the License.
-
-import { FC } from "react";
-import { useConnectWallet, useSetChain } from "@web3-onboard/react";
 import configFile from "./config.json";
 
 const config: any = configFile;
 
-export const Network: FC = () => {
-    const [{ wallet, connecting }, connect, disconnect] = useConnectWallet();
-    const [{ chains, connectedChain, settingChain }, setChain] = useSetChain();
+interface Propos {
+    onChange(chain:string|undefined,address:string|undefined):void 
+}
+
+export const Network: FC<Propos> = ({onChange}:{onChange(chain:string|undefined,address:string|undefined):void}) => {
+
+    const [chain, setChain] = useState<string|undefined>("0x7a69");
+    const [walletAddress, setWalletAddress] = useState<string>();
+    
+    const accountsChanged = (accounts:string[]) => {
+        if (accounts.length === 0) {
+            // MetaMask is locked or the user has not connected any accounts.
+            setChain(undefined);
+            setWalletAddress(undefined);
+            onChange(undefined,undefined);
+            return;
+        } else if (accounts[0] !== walletAddress) {
+            // Reload your interface with accounts[0].
+            setWalletAddress(accounts[0]);
+        }
+    };
+
+    const chainChanged = (chainId:string) => {
+        window.ethereum?.request({method:"eth_requestAccounts"}).then((accounts) => {
+            if (!accounts || accounts.length === 0) {
+                setChain(undefined);
+                setWalletAddress(undefined);
+                onChange(undefined,undefined);
+                return;
+            }
+
+            setChain(chainId);
+            setWalletAddress(accounts[0]);
+            onChange(chainId,accounts[0]);
+        });
+    };
+
+    window.ethereum?.removeListener("accountsChanged", accountsChanged);
+    window.ethereum?.removeListener("chainChanged", chainChanged);
+    window.ethereum?.on('accountsChanged', accountsChanged);
+    window.ethereum?.on("chainChanged", chainChanged);
+
+    async function connect() {
+        if (!chain) return;
+        try {
+            
+            if (!window.ethereum) {
+                alert("no provider");
+                return;
+            }
+
+            await window.ethereum?.request(
+                {method:"wallet_switchEthereumChain",params:[{chainId:chain}]}
+            );
+
+            const accounts = await window.ethereum?.request({method:"eth_requestAccounts"});
+
+            if (!accounts || accounts.length === 0) {
+                setChain(undefined);
+                setWalletAddress(undefined);
+                onChange(undefined,undefined);
+                return;
+            }
+
+            setWalletAddress(accounts[0]);
+
+            onChange(chain,accounts[0]);
+
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
     return (
         <div>
-            {!wallet && <button
+        <div>
+            <select
+                onChange={({ target: { value } }) => {
+                    if (config.chains[value] !== undefined) {
+                        setChain(value);
+                    } else {
+                        alert("No deploy on this chain")
+                    }
+                    }
+                }
+                value={chain}
+                >
+                {Object.entries(config.chains).map(([k, v]: [string, any], i) => {
+                    return (
+                        <option key={k} value={k}>
+                            {v.label}
+                        </option>
+                    );
+                })}
+            </select>
+            <button
                 onClick={() =>
                     connect()
                 }
-            >
-                {connecting ? "connecting" : "connect"}
-            </button>}
-            {wallet && (
-                <div>
-                    <label>Switch Chain</label>
-                    {settingChain ? (
-                        <span>Switching chain...</span>
-                    ) : (
-                        <select
-                            onChange={({ target: { value } }) => {
-                                if (config[value] !== undefined) {
-                                    setChain({ chainId: value })
-                                } else {
-                                    alert("No deploy on this chain")
-                                }
-                                }
-                            }
-                            value={connectedChain?.id}
-                        >
-                            {chains.map(({ id, label }) => {
-                                return (
-                                    <option key={id} value={id}>
-                                        {label}
-                                    </option>
-                                );
-                            })}
-                        </select>
-                    )}
-                    <button onClick={() => disconnect(wallet)}>
-                        Disconnect Wallet
-                    </button>
-                </div>
-            )}
+            >connect</button>
+            </div>
+            {walletAddress ? <div>
+                Connected wallet: {walletAddress}<br />
+            </div> : <></>}
+            {walletAddress && chain ? <div>
+                Connected chainId: {parseInt(chain?.substring(2) ?? "0", 16)}<br />
+            </div> : <></>}
         </div>
     );
 };
