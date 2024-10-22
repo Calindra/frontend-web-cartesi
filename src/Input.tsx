@@ -125,7 +125,7 @@ export const Input: React.FC<INodeComponentProps> = (props: INodeComponentProps)
             if (!account) { return; }
 
             let payload = toHex(str);
-            if (hexInput) {
+            if (hexCartesiInput) {
                 payload = str as `0x${string}`;
             }
 
