@@ -86,17 +86,9 @@ export const Input: React.FC<INodeComponentProps> = (props: INodeComponentProps)
     }
 
     const fetchNonceL2 = async (user: any, application: any) => {
-        const response = await fetch(`${config.chains[props.chain].l2EIP712Url}/nonce`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ msg_sender: user, app_contract: application })
-        });
-
-        const responseData = await response.json();
-        const nextNonce = responseData.nonce;
-        return nextNonce
+        const response = await fetch(`${config.chains[props.chain].l2EIP712Url}/nonce/${user}/${application}`)
+        const nonce = await response.json()
+        return nonce
     }
 
     const submitTransactionL2 = async (fullBody: any) => {
@@ -149,7 +141,7 @@ export const Input: React.FC<INodeComponentProps> = (props: INodeComponentProps)
                 const res = await submitTransactionL2(
                     l2data
                 );
-                setCartesiTxId(res.id);
+                setCartesiTxId(res);
             } catch (e) {
                 console.log(`${e}`);
             }
