@@ -10,7 +10,7 @@ import { Notices } from "./Notices";
 import { Vouchers } from "./Vouchers";
 
 const App: FC = () => {
-    const [appAddress, setAppAddress] = useState<`0x${string}`|undefined>("0xab7528bb862fb57e8a2bcd567a2e929a0be56a5e");
+    const [appAddress, setAppAddress] = useState<`0x${string}`|undefined>("0x75135d8ADb7180640d29d822D9AD59E83E8695b2");
 
     const [chainId, setChainId] = useState<string>();
 
