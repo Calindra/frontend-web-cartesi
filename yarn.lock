@@ -632,12 +632,10 @@
     "@babel/helper-string-parser" "^7.25.9"
     "@babel/helper-validator-identifier" "^7.25.9"
 
-"@cartesi/rollups@2.0.0-rc.14":
-  version "2.0.0-rc.14"
-  resolved "https://registry.yarnpkg.com/@cartesi/rollups/-/rollups-2.0.0-rc.14.tgz#39dd937b0ecad35d94ebe66f976c38181fab7256"
-  integrity sha512-64XPgw4Klzm5CPfol9ZXCTAdl5kT8SC7sEzxnuGGMSE7SiixXmLcQqhbqFRAgJSiby4Mv79+jJp8IMy3LmWv5A==
-  dependencies:
-    "@openzeppelin/contracts" "5.0.2"
+"@cartesi/rollups@2.0.0-rc.18":
+  version "2.0.0-rc.18"
+  resolved "https://registry.yarnpkg.com/@cartesi/rollups/-/rollups-2.0.0-rc.18.tgz#fc8da8eb73f28db3965dfc668b46d953dda9c5c7"
+  integrity sha512-9tZwLetZA4dwp+T6IT2k7YyFiJYaeuDxue+fTXYg+eRBpL3OBfCfIJAArLqO1Uftvvcbkv+aqptr50VuNvwt6g==
 
 "@cspotcode/source-map-support@^0.8.0":
   version "0.8.1"
@@ -1592,11 +1590,6 @@
   dependencies:
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
-
-"@openzeppelin/contracts@5.0.2":
-  version "5.0.2"
-  resolved "https://registry.yarnpkg.com/@openzeppelin/contracts/-/contracts-5.0.2.tgz#b1d03075e49290d06570b2fd42154d76c2a5d210"
-  integrity sha512-ytPc6eLGcHHnapAZ9S+5qsdomhjo6QBHTDRRBFfTxXIpsicMhVPouPgmUPebZZZGX7vt9USA+Z+0M0dSVtSUEA==
 
 "@repeaterjs/repeater@^3.0.4", "@repeaterjs/repeater@^3.0.6":
   version "3.0.6"

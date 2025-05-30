@@ -8,12 +8,11 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "codegen": "run-p wagmi:gen graphql:gen",
-    "wagmi:gen": "wagmi generate",
+    "codegen": "run-p graphql:gen",
     "graphql:gen": "graphql-code-generator"
   },
   "dependencies": {
-    "@cartesi/rollups": "2.0.0-rc.14",
+    "@cartesi/rollups": "2.0.0-rc.18",
     "ethers": "^6.13.3",
     "graphql": "^16.9.0",
     "graphql-request": "^7.1.0",

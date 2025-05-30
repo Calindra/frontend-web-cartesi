@@ -4,7 +4,10 @@ import { getClient, getWalletClient, INodeComponentProps } from "./utils/chain";
 
 import configFile from "./config.json";
 import { toHex, type Hex } from "viem";
-import { inputBoxAbi } from "./generated/rollups";
+// import { inputBoxAbi } from "./generated/rollups";
+// import { inputBoxAddress } from "./generated/rollups"
+import * as inputBox from "@cartesi/rollups/out/IInputBox.sol/IInputBox.json";
+
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const config: any = configFile;
@@ -39,8 +42,8 @@ export const Input: React.FC<INodeComponentProps> = (props: INodeComponentProps)
 
                 const { request } = await client.simulateContract({
                     account: address,
-                    address: config.contracAddresses.InputBox as `0x${string}`,
-                    abi: inputBoxAbi,
+                    address: "0xc7007368E1b9929488744fa4dea7BcAEea000051",
+                    abi: inputBox.abi,
                     functionName: 'addInput',
                     args: [props.appAddress, payload]
                 });

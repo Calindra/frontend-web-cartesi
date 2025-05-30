@@ -25,7 +25,6 @@ export const Inspect: React.FC<INodeComponentProps> = (props) => {
     const [reports, setReports] = useState<Report[]>([]);
     const [metadata, setMetadata] = useState<Partial<Metadata>>({});
     const [hexData, setHexData] = useState<boolean>(false);
-    const [postData, setPostData] = useState<boolean>(false);
 
     const inspectCall = async (str: string) => {
         let payload = str;
@@ -46,14 +45,8 @@ export const Inspect: React.FC<INodeComponentProps> = (props) => {
             return;
         }
 
-        let fetchData: Promise<Response>;
-        if (postData) {
-            const payloadBlob = new TextEncoder().encode(payload);
-            fetchData = fetch(`${apiURL}`, { method: 'POST', body: payloadBlob });
-        } else {
-            fetchData = fetch(`${apiURL}/${encodeURIComponent(payload)}`);
-        }
-        fetchData
+        const payloadBlob = new TextEncoder().encode(payload);
+        fetch(`${apiURL}`, { method: 'POST', body: payloadBlob })
             .then(response => response.json())
             .then(data => {
                 setReports(data.reports);
@@ -69,7 +62,6 @@ export const Inspect: React.FC<INodeComponentProps> = (props) => {
                     onChange={(e) => setInspectData(e.target.value)}
                 />
                 <input type="checkbox" checked={hexData} onChange={() => setHexData(!hexData)}/><span>Raw Hex </span>
-                <input type="checkbox" checked={postData} onChange={() => setPostData(!postData)}/><span>POST </span>
                 <button onClick={() => inspectCall(inspectData)} disabled={!props.chain}>
                     Send
                 </button>
