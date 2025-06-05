@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { getClient, getWalletClient, INodeComponentProps } from "./utils/chain";
-import { BaseError, erc20Abi, erc721Abi, parseEther, parseUnits, toHex } from "viem";
+import { BaseError, erc20Abi, erc721Abi, parseAbi, parseEther, parseUnits, toHex } from "viem";
 // import { erc20PortalAddress, erc20PortalAbi, erc721PortalAddress, erc721PortalAbi, erc1155SinglePortalAddress, erc1155BatchPortalAddress, etherPortalAddress, etherPortalAbi, ierc1155Abi, erc1155SinglePortalAbi, erc1155BatchPortalAbi } from "./generated/rollups"
 
 import * as etherPortal from "@cartesi/rollups/out/IEtherPortal.sol/IEtherPortal.json";
@@ -9,6 +9,11 @@ import * as erc721Portal from "@cartesi/rollups/out/IERC721Portal.sol/IERC721Por
 import * as erc1155SinglePortal from "@cartesi/rollups/out/IERC1155SinglePortal.sol/IERC1155SinglePortal.json";
 import * as erc1155BatchPortal from "@cartesi/rollups/out/IERC1155BatchPortal.sol/IERC1155BatchPortal.json";
 
+const humanErc1155Abi = [
+    "function setApprovalForAll(address operator, bool approved)",
+    "function isApprovedForAll(address account, address operator) returns (bool)",
+];
+const erc1155Abi = parseAbi(humanErc1155Abi);
 
 export const Portals: React.FC<INodeComponentProps> = (props: INodeComponentProps) => {
     const [chainId, setChainId] = useState<string>();
@@ -51,7 +56,7 @@ export const Portals: React.FC<INodeComponentProps> = (props: INodeComponentProp
 
                 const { request } = await client.simulateContract({
                     account: address,
-                    address: "0xC700e916E5c4DE0C41F410Fb05ab5337DcD20051",
+                    address: "0xc70076a466789B595b50959cdc261227F0D70051",
                     abi: etherPortal.abi,
                     functionName: "depositEther",
                     args: [props.appAddress, data],
@@ -80,7 +85,7 @@ export const Portals: React.FC<INodeComponentProps> = (props: INodeComponentProp
                 const [address] = await walletClient.requestAddresses();
                 if (!address) return;
 
-                const portalAddress= "0xc700420c212ED31Cd03Dfa48dA69420521000051";
+                const portalAddress= "0xc700D6aDd016eECd59d989C028214Eaa0fCC0051";
 
                 const currAllowance = await client.readContract({
                     address: token,
@@ -140,7 +145,7 @@ export const Portals: React.FC<INodeComponentProps> = (props: INodeComponentProp
                 const [address] = await walletClient.requestAddresses();
                 if (!address) return;
 
-                const portalAddress = "0xc7001E12A36da9AB46f0B42755C7d62FebE70051";
+                const portalAddress = "0xc700d52F5290e978e9CAe7D1E092935263b60051";
 
                 const currentApproval = await client.readContract({
                     address: token,
@@ -197,11 +202,11 @@ export const Portals: React.FC<INodeComponentProps> = (props: INodeComponentProp
                 const [address] = await walletClient.requestAddresses();
                 if (!address) return;
 
-                const portalAddress = "0xC7006aFc01dDA85b8826231e2f7377A197100051";
+                const portalAddress = "0xc700A261279aFC6F755A3a67D86ae43E2eBD0051";
 
                 const currentApproval = await client.readContract({
                     address: token,
-                    abi: ierc1155Abi,
+                    abi: erc1155Abi,
                     functionName: "isApprovedForAll",
                     args: [address,portalAddress]
                 });
@@ -210,7 +215,7 @@ export const Portals: React.FC<INodeComponentProps> = (props: INodeComponentProp
                     const { request } = await client.simulateContract({
                         account: address,
                         address: token,
-                        abi: ierc1155Abi,
+                        abi: erc1155Abi,
                         functionName: "setApprovalForAll",
                         args: [portalAddress,true]
                     });
@@ -254,11 +259,11 @@ export const Portals: React.FC<INodeComponentProps> = (props: INodeComponentProp
                 const [address] = await walletClient.requestAddresses();
                 if (!address) return;
 
-                const portalAddress = "0xc700bF0B4DFa17676233733f665B0A8fDb500051";
+                const portalAddress = "0xc700A2e5531E720a2434433b6ccf4c0eA2400051";
 
                 const currentApproval = await client.readContract({
                     address: token,
-                    abi: ierc1155Abi,
+                    abi: erc1155Abi,
                     functionName: "isApprovedForAll",
                     args: [address,portalAddress]
                 });
@@ -267,7 +272,7 @@ export const Portals: React.FC<INodeComponentProps> = (props: INodeComponentProp
                     const { request } = await client.simulateContract({
                         account: address,
                         address: token,
-                        abi: ierc1155Abi,
+                        abi: erc1155Abi,
                         functionName: "setApprovalForAll",
                         args: [portalAddress,true]
                     });

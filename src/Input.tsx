@@ -42,7 +42,7 @@ export const Input: React.FC<INodeComponentProps> = (props: INodeComponentProps)
 
                 const { request } = await client.simulateContract({
                     account: address,
-                    address: "0xc7007368E1b9929488744fa4dea7BcAEea000051",
+                    address: "0xc70074BDD26d8cF983Ca6A5b89b8db52D5850051",
                     abi: inputBox.abi,
                     functionName: 'addInput',
                     args: [props.appAddress, payload]
